@@ -1,0 +1,613 @@
+/* ═══════════════════════════════════════════════════════════════
+   SCRIBBLE- UAT EXTENSION — ULTRA-MINIMAL APPLE GLASS UI
+   Author: Anil James
+   LinkedIn: https://www.linkedin.com/in/aniljames7/
+ ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --mk-glass-bg: rgba(255, 255, 255, 0.82);
+  --mk-glass-border: rgba(255, 255, 255, 0.5);
+  --mk-glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.03);
+  --mk-glass-blur: blur(32px) saturate(210%);
+
+  --mk-surf-solid: #ffffff;
+  --mk-border-subtle: rgba(226, 232, 240, 0.7);
+
+  --mk-text: #0f172a;
+  --mk-text-sub: #475569;
+  --mk-text-muted: #94a3b8;
+
+  --mk-accent: #007aff;
+  --mk-accent-hover: #0062cc;
+  --mk-danger: #ff3b30;
+  --mk-warn: #ff9500;
+  --mk-success: #34c759;
+}
+
+/* ── Canvas Overlay ──────────────────────────────────────────── */
+#marker-ext-canvas {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 2147483640 !important;
+  pointer-events: none;
+  touch-action: none;
+}
+#marker-ext-canvas.active {
+  pointer-events: auto !important;
+  cursor: crosshair;
+}
+
+/* ── DOM Element Inspector Highlight Box ──────────────────────── */
+#marker-ext-element-highlight {
+  position: fixed !important;
+  z-index: 2147483642 !important;
+  pointer-events: none !important;
+  border: 1.5px solid #007aff !important;
+  background: rgba(0, 122, 255, 0.1) !important;
+  border-radius: 6px !important;
+  transition: all 0.06s ease-out !important;
+  display: none;
+}
+#marker-ext-element-badge {
+  position: absolute !important;
+  top: -24px !important;
+  left: 0 !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  backdrop-filter: blur(8px) !important;
+  color: #ffffff !important;
+  font-family: SFMono-Regular, Menlo, Monaco, monospace !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  padding: 2px 7px !important;
+  border-radius: 5px !important;
+  white-space: nowrap !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
+}
+
+/* ── Base Container ──────────────────────────────────────────── */
+#marker-ext-container {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif !important;
+  color: var(--mk-text) !important;
+  line-height: 1.3 !important;
+  box-sizing: border-box !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+#marker-ext-container *, #marker-ext-container *::before, #marker-ext-container *::after {
+  box-sizing: border-box !important;
+}
+
+/* ── Minimal Apple Floating Dock / Toolbar ────────────────────── */
+#marker-ext-toolbar {
+  position: fixed !important;
+  top: 14px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 2147483645 !important;
+  background: var(--mk-glass-bg) !important;
+  backdrop-filter: var(--mk-glass-blur) !important;
+  -webkit-backdrop-filter: var(--mk-glass-blur) !important;
+  border: 1px solid var(--mk-glass-border) !important;
+  border-radius: 20px !important;
+  padding: 4px 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  max-width: 96vw !important;
+  overflow-x: auto !important;
+  box-shadow: var(--mk-glass-shadow) !important;
+  user-select: none !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+#marker-ext-toolbar::-webkit-scrollbar { height: 0px !important; }
+
+.mk-tool-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  flex-shrink: 0 !important;
+}
+.mk-sep {
+  width: 1px !important;
+  height: 14px !important;
+  background: rgba(148, 163, 184, 0.25) !important;
+  margin: 0 3px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Minimal Apple Action Buttons */
+.mk-btn {
+  height: 30px !important;
+  padding: 0 9px !important;
+  border-radius: 12px !important;
+  border: 1px solid transparent !important;
+  background: none !important;
+  color: var(--mk-text-sub) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  transition: all 0.12s ease !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+.mk-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: var(--mk-text) !important;
+}
+.mk-btn.active {
+  background: var(--mk-accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25) !important;
+}
+.mk-btn.primary {
+  background: var(--mk-text) !important;
+  color: #ffffff !important;
+}
+.mk-btn.primary:hover:not(:disabled) {
+  background: #1e293b !important;
+}
+.mk-btn.danger {
+  color: var(--mk-danger) !important;
+}
+.mk-btn.danger:hover:not(:disabled) {
+  background: #ffe5e5 !important;
+  color: #d70015 !important;
+}
+.mk-btn:disabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
+}
+.mk-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Shapes Dropdown Component (Hover & Click Expandable) */
+.mk-dropdown-wrap {
+  position: relative !important;
+  display: inline-flex !important;
+}
+.mk-dropdown-wrap:hover .mk-dropdown-menu {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
+.mk-dropdown-menu {
+  position: absolute !important;
+  top: 30px !important;
+  left: 0 !important;
+  background: var(--mk-glass-bg) !important;
+  backdrop-filter: var(--mk-glass-blur) !important;
+  -webkit-backdrop-filter: var(--mk-glass-blur) !important;
+  border: 1px solid var(--mk-glass-border) !important;
+  border-radius: 14px !important;
+  padding: 4px !important;
+  box-shadow: var(--mk-glass-shadow) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  z-index: 2147483647 !important;
+  min-width: 110px !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(4px) !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.mk-dropdown-menu.hidden {
+  display: none !important;
+}
+.mk-dropdown-item {
+  height: 28px !important;
+  padding: 0 8px !important;
+  border-radius: 10px !important;
+  border: none !important;
+  background: none !important;
+  color: var(--mk-text) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: all 0.12s ease !important;
+  width: 100% !important;
+}
+.mk-dropdown-item:hover {
+  background: rgba(0, 122, 255, 0.1) !important;
+  color: var(--mk-accent) !important;
+}
+.mk-dropdown-item.active {
+  background: var(--mk-accent) !important;
+  color: #ffffff !important;
+}
+
+
+
+/* Color & Size Controls */
+.mk-picker-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 0 3px !important;
+  flex-shrink: 0 !important;
+}
+#marker-ext-color {
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  border: 1.5px solid #ffffff !important;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12) !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  background: none !important;
+}
+#marker-ext-size {
+  width: 48px !important;
+  accent-color: var(--mk-accent) !important;
+  cursor: pointer !important;
+}
+
+
+
+/* ── DevTools In-Page Device Viewport Simulator ────────────── */
+#marker-ext-stage-bg {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  z-index: 2147483638 !important;
+  pointer-events: none !important;
+  display: none;
+}
+
+#marker-ext-viewport-tag {
+  position: fixed !important;
+  bottom: 12px !important;
+  left: 14px !important;
+  z-index: 2147483647 !important;
+  pointer-events: none !important;
+}
+.mk-vp-tag {
+  background: rgba(15, 23, 42, 0.92) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  color: #007aff !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 5px 12px !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(0, 122, 255, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* ── Minimal UAT Log Drawer ──────────────────────────────────── */
+#marker-ext-log-drawer {
+  position: fixed !important;
+  top: 58px !important;
+  right: 14px !important;
+  width: 320px !important;
+  max-width: 92vw !important;
+  max-height: calc(100vh - 75px) !important;
+  z-index: 2147483644 !important;
+  background: var(--mk-glass-bg) !important;
+  backdrop-filter: var(--mk-glass-blur) !important;
+  -webkit-backdrop-filter: var(--mk-glass-blur) !important;
+  border: 1px solid var(--mk-glass-border) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--mk-glass-shadow) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease !important;
+}
+#marker-ext-log-drawer.hidden {
+  transform: translateX(360px) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.mk-drawer-head {
+  padding: 10px 14px !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+.mk-drawer-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--mk-text) !important;
+}
+
+.mk-drawer-foot {
+  padding: 8px 12px !important;
+  border-top: 1px solid var(--mk-border-subtle) !important;
+  background: rgba(241, 245, 249, 0.4) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 11px !important;
+  color: var(--mk-text-muted) !important;
+}
+
+.mk-bucket-filter-bar {
+  padding: 6px 8px !important;
+  background: rgba(241, 245, 249, 0.5) !important;
+  border-bottom: 1px solid var(--mk-border-subtle) !important;
+  display: flex !important;
+  gap: 3px !important;
+  overflow-x: auto !important;
+}
+.mk-bucket-filter-bar::-webkit-scrollbar { height: 0; }
+
+.mk-bfilter-btn {
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  padding: 2px 7px !important;
+  border-radius: 8px !important;
+  border: 1px solid transparent !important;
+  background: none !important;
+  color: var(--mk-text-sub) !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+.mk-bfilter-btn.active {
+  background: #ffffff !important;
+  color: var(--mk-accent) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+}
+
+.mk-drawer-body {
+  padding: 10px !important;
+  overflow-y: auto !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.mk-log-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid var(--mk-border-subtle) !important;
+  border-left: 4px solid var(--mk-accent) !important;
+  border-radius: 12px !important;
+  padding: 10px 12px !important;
+  cursor: pointer !important;
+  transition: all 0.12s ease !important;
+}
+.mk-log-card:hover {
+  background: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important;
+}
+.mk-log-top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 5px !important;
+  font-size: 10px !important;
+  color: var(--mk-text-muted) !important;
+  font-weight: 500 !important;
+}
+.mk-sev-badge {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  padding: 2px 6px !important;
+  border-radius: 8px !important;
+  text-transform: uppercase !important;
+}
+.mk-sev-critical { background: #ffe5e5 !important; color: #d70015 !important; }
+.mk-sev-high { background: #ffefe5 !important; color: #c2410c !important; }
+.mk-sev-medium { background: #fffbe5 !important; color: #a16207 !important; }
+.mk-sev-low { background: #e5f9ed !important; color: #15803d !important; }
+
+.mk-log-element-tag {
+  font-family: SFMono-Regular, monospace !important;
+  font-size: 10px !important;
+  color: #007aff !important;
+  background: rgba(0, 122, 255, 0.08) !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  margin-bottom: 5px !important;
+  display: inline-block !important;
+}
+
+.mk-log-note {
+  font-size: 12px !important;
+  color: var(--mk-text) !important;
+  font-weight: 400 !important;
+  margin-bottom: 6px !important;
+  line-height: 1.35 !important;
+}
+.mk-status-select {
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  padding: 2px 5px !important;
+  border-radius: 5px !important;
+  border: 1px solid var(--mk-border-subtle) !important;
+  background: #fff !important;
+  color: var(--mk-text) !important;
+  outline: none !important;
+}
+
+/* ── Minimal Apple Modal ─────────────────────────────────────── */
+#marker-ext-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483646 !important;
+  background: rgba(15, 23, 42, 0.25) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s ease !important;
+}
+#marker-ext-modal-backdrop.show {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.mk-modal {
+  background: var(--mk-glass-bg) !important;
+  backdrop-filter: var(--mk-glass-blur) !important;
+  -webkit-backdrop-filter: var(--mk-glass-blur) !important;
+  border: 1px solid var(--mk-glass-border) !important;
+  border-radius: 20px !important;
+  width: 400px !important;
+  max-width: 90vw !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16) !important;
+  padding: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+.mk-modal-title {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--mk-text) !important;
+}
+.mk-form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+}
+.mk-form-label {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: var(--mk-text-sub) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+.mk-chip-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 5px !important;
+}
+.mk-chip {
+  padding: 4px 10px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--mk-border-subtle) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--mk-text-sub) !important;
+  cursor: pointer !important;
+  transition: all 0.12s ease !important;
+}
+.mk-chip.selected {
+  border-color: var(--mk-accent) !important;
+  background: var(--mk-accent) !important;
+  color: #ffffff !important;
+}
+.mk-textarea {
+  width: 100% !important;
+  height: 70px !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--mk-border-subtle) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  padding: 8px 10px !important;
+  font-size: 13px !important;
+  color: var(--mk-text) !important;
+  outline: none !important;
+  resize: vertical !important;
+}
+.mk-textarea:focus {
+  border-color: var(--mk-accent) !important;
+}
+
+/* Minimal Glass Toast */
+#marker-ext-toast {
+  position: fixed !important;
+  bottom: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) translateY(80px) !important;
+  z-index: 2147483647 !important;
+  background: rgba(15, 23, 42, 0.88) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  color: #ffffff !important;
+  padding: 8px 16px !important;
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+#marker-ext-toast.show {
+  transform: translateX(-50%) translateY(0) !important;
+}
+
+/* ── Main Toolbar Responsiveness ─────────────────────────────── */
+@media (max-width: 768px) {
+  #marker-ext-toolbar {
+    top: 8px !important;
+    padding: 3px 5px !important;
+    max-width: 98vw !important;
+    gap: 1.5px !important;
+    border-radius: 16px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .mk-btn {
+    height: 28px !important;
+    padding: 0 6px !important;
+    gap: 3px !important;
+    font-size: 11px !important;
+  }
+  .mk-sep {
+    height: 12px !important;
+    margin: 0 2px !important;
+  }
+  #marker-ext-size {
+    width: 36px !important;
+  }
+  .mk-author-link {
+    font-size: 9.5px !important;
+    padding: 0 4px !important;
+  }
+  #marker-ext-log-drawer {
+    top: 50px !important;
+    right: 8px !important;
+    width: calc(100vw - 16px) !important;
+    max-height: calc(100vh - 65px) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #marker-ext-toolbar {
+    top: 6px !important;
+    padding: 2px 4px !important;
+    border-radius: 14px !important;
+  }
+  .mk-btn span {
+    display: none !important;
+  }
+  .mk-btn {
+    padding: 0 5px !important;
+  }
+  .mk-picker-wrap {
+    gap: 3px !important;
+    padding: 0 1px !important;
+  }
+  #marker-ext-size {
+    width: 28px !important;
+  }
+  .mk-modal {
+    padding: 14px !important;
+    width: 95vw !important;
+  }
+}
